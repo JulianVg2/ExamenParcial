@@ -1,0 +1,104 @@
+﻿@page "/Ingreso-libros"
+@inject HttpClient http
+@inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+<h3>IngresoLibros</h3>
+
+<EditForm Model="@revistas" OnValidSubmit="@Guardar">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="Titulo">Titulo</label>
+        <InputText id="Titulo" @bind-Value="revistas.Titulo" class="form-control" />
+        <ValidationMessage For="() => revistas.Titulo" />
+    </div>
+    <div class="form-group">
+        <label for="Titulo">Autor</label>
+        <InputText id="Autor" @bind-Value="revistas.Autor" class="form-control" />
+        <ValidationMessage For="() => revistas.Autor" />
+    </div>
+    <div class="form-group">
+        <label for="Titulo">Genero</label>
+        <InputText id="Genero" @bind-Value="revistas.Genero" class="form-control" />
+        <ValidationMessage For="() => revistas.Genero" />
+    </div>
+    <div class="form-group">
+        <label for="AnioPublicacion">AnioPublicacion</label>
+        <InputNumber id="AnioPublicacion" @bind-Value="revistas.AnioPublicacion" class="form-control" />
+        <ValidationMessage For="() => revistas.AnioPublicacion" />
+    </div>
+    <div class="form-group">
+        <label for="Volumen">Volumen</label>
+        <InputNumber id="Volumen" @bind-Value="revistas.Volumen" class="form-control" />
+        <ValidationMessage For="() => revistas.Volumen" />
+    </div>
+    <div class="form-group">
+        <label for="NumeroEjemplar">NumeroEjemplar</label>
+        <InputNumber id="NumeroEjemplar" @bind-Value="revistas.NumeroEjemplar" class="form-control" />
+        <ValidationMessage For="() => revistas.NumeroEjemplar" />
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </div>
+
+</EditForm>
+
+@* agregar tabla  *@
+@if (revistaslista != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Titulo</th>
+                <th>Autor</th>
+                <th>Genero</th>
+                <th>AnioPublicacion</th>
+                <th>Volumen</th>
+                <th>NumeroEjemplar</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var revista in revistaslista)
+            {
+                <tr>
+                    <td>@revista.Titulo</td>
+                    <td>@revista.Autor</td>
+                    <td>@revista.Genero</td>
+                    <td>@revista.AnioPublicacion</td>
+                    <td>@revista.Volumen</td>
+                    <td>@revista.NumeroEjemplar</td>
+         
+
+
+
+
+
+
+
+
+
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private Revistas revistas = new Revistas();
+    List<Revistas> revistaslista = new List<Revistas>();
+
+    protected async Task Guardar()
+    {
+        revistaslista.Add(revistas);
+        revistas = new Revistas();
+        await localStorage.SetItemAsync("aveslista", revistaslista);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {   //La primera vez que se corre poner en comentarios, pues como no existen datos
+        //convierta la lista catedraticos en null
+       // revistaslista = await localStorage.GetItemAsync<List<Revistas>>("revistaslista");
+    }
+}
