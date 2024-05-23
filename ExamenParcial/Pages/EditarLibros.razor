@@ -1,9 +1,9 @@
-﻿@page "/Ingreso-libros"
+﻿@page "/Editarlibros/{TituloLibro}"
 @inject HttpClient http
 @inject NavigationManager NavigationManager
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 
-<h3>IngresoLibros</h3>
+<h3>EditarLibros</h3>
 
 <EditForm Model="@revistas" OnValidSubmit="@Guardar">
     <DataAnnotationsValidator />
@@ -43,68 +43,27 @@
         <button type="submit" class="btn btn-primary">Guardar</button>
     </div>
 
+
+
 </EditForm>
 
-@* agregar tabla  *@
-@if (revistaslista != null)
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Titulo</th>
-                <th>Autor</th>
-                <th>Genero</th>
-                <th>AnioPublicacion</th>
-                <th>Volumen</th>
-                <th>NumeroEjemplar</th>
-                <th>Editar</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var revista in revistaslista)
-            {
-                <tr>
-                    <td>@revista.Titulo</td>
-                    <td>@revista.Autor</td>
-                    <td>@revista.Genero</td>
-                    <td>@revista.AnioPublicacion</td>
-                    <td>@revista.Volumen</td>
-                    <td>@revista.NumeroEjemplar</td>
-
-
-                   
-                   
-                    <td>
-                        <button class="btn btn-warning"
-                                @onclick="@(() => NavigationManager.NavigateTo($"/Editarlibros/{revista.Titulo}"))">
-                            Editar
-                        </button>
-                    </td>
-
-
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-
 @code {
+
+    [Parameter]
+    public string TituloLibro { get; set; }
+
     private Revistas revistas = new Revistas();
     List<Revistas> revistaslista = new List<Revistas>();
 
     protected async Task Guardar()
     {
-        revistaslista.Add(revistas);
-        revistas = new Revistas();
         await localStorage.SetItemAsync("revistaslista", revistaslista);
+        NavigationManager.NavigateTo("/Ingreso-libros");
     }
-
     protected override async Task OnInitializedAsync()
-    {   //La primera vez que se corre poner en comentarios, pues como no existen datos
-        //convierta la lista catedraticos en null
+    {
         revistaslista = await localStorage.GetItemAsync<List<Revistas>>("revistaslista");
+        revistas = revistaslista.Find(c => c.Titulo == TituloLibro);
     }
-
-    //
 
 }
